@@ -70,10 +70,11 @@ void Passageiro::run(int i)
 
         saiDoCarro();
 
-        //while ( !carro.lock );
-
-        passeiaPeloParque(); // secao nao critica
+        passeiaPeloParque();
 
     }
+    while(carro.nPessoas != 0);
+    pthread_mutex_lock(&printf_mutex);
     std::cout << "Passageiro [" << i << "] saindo do parque!\n";
+    pthread_mutex_unlock(&printf_mutex);
 }
