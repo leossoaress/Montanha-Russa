@@ -8,7 +8,7 @@ Carro::Carro(Parque &p) : parque(p)
 {
 
     this->voltas = 0;
-    Carro::capacidade = p.getNumPassageiros() / 2;
+    Carro::capacidade = 5;
     this->nPassageiros = 0;
     nPessoas = 0;
     lock = true;
@@ -21,6 +21,7 @@ Carro::~Carro() {}
 void Carro::esperaEncher()
 {
     while(nPessoas != capacidade);
+
     pthread_mutex_lock(&printf_mutex);
     std::cout << "Encheu\n";
     pthread_mutex_unlock(&printf_mutex);

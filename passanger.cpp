@@ -1,6 +1,6 @@
 #include "passanger.h"
 
-#define MAX_NUM_VOLTAS 6
+#define MAX_NUM_VOLTAS 5
 
 std::atomic_int number = {1};
 
@@ -43,7 +43,7 @@ void Passageiro::run(int i)
     while (!parqueFechado())
     {
 
-        if(carro.getNVoltas() == MAX_NUM_VOLTAS)
+        if (carro.getNVoltas() == MAX_NUM_VOLTAS || (carro.nPessoas == 5 && carro.getNVoltas() == MAX_NUM_VOLTAS-1))
             break;
 
         carro.turn[i] = std::atomic_fetch_add( &number, 1 );
