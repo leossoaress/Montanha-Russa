@@ -3,6 +3,9 @@
 #define MAX_NUM_VOLTAS 5
 
 std::atomic_int number = {1};
+std::atomic_int number1 = {5};
+
+bool lock = false;
 
 static pthread_mutex_t printf_mutex;
 
@@ -38,6 +41,16 @@ bool Passageiro::parqueFechado()
     return true;
 }
 
+bool TS(bool *lock)
+{
+    pthread_mutex_lock(&printf_mutex);
+    bool temp = *lock;
+    *lock = true;
+    pthread_mutex_unlock(&printf_mutex);
+    return temp;
+
+}
+
 void Passageiro::run(int i)
 {
     while (!parqueFechado())
@@ -64,11 +77,17 @@ void Passageiro::run(int i)
 
         while(carro.lock);
 
+        while(TS(&lock));
+
         pthread_mutex_lock(&printf_mutex);
         std::cout << "Passageiro [" << i << "] saiu no carro\n";
         pthread_mutex_unlock(&printf_mutex);
 
         saiDoCarro();
+
+        lock = false;
+
+
 
         passeiaPeloParque();
 
