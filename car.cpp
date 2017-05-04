@@ -81,12 +81,12 @@ void Carro::run()
 {
     while (parque.getNumPassageiros() > 0)
     {
-        esperaEncher();
-        daUmaVolta();
-        lock = false;
+        esperaEncher();     // Espera encher
+        daUmaVolta();       // Dorme com sleep
+        lock = false;       // Avisa que o carro encheu
 
-        esperaEsvaziar();
-        lock = true;
+        esperaEsvaziar();   // Espera esvaziar
+        lock = true;        // Avisa que o carro esvaziou
 
     }
 }

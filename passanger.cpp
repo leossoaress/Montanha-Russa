@@ -56,43 +56,59 @@ void Passageiro::run(int i)
     while (!parqueFechado())
     {
 
+
         if (carro.getNVoltas() == MAX_NUM_VOLTAS || (carro.nPessoas == 5 && carro.getNVoltas() == MAX_NUM_VOLTAS-1))
             break;
 
-        carro.turn[i] = std::atomic_fetch_add( &number, 1 );
+        carro.turn[i] = std::atomic_fetch_add( &number, 1 );   // O passageiro pega a ficha
 
-        while (carro.turn[i] != carro.next);
+        while (carro.turn[i] != carro.next)                    // Espera a ficha dele
+        {
+            if (carro.getNVoltas() == MAX_NUM_VOLTAS)          // Sai da fila caso o carro já deu o máximo numero de voltas
+                break;
+        }
 
-        while(carro.nPessoas == carro.capacidade);
+        while(carro.nPessoas == carro.capacidade)              // Espera caso o carro  esteja cheio
+        {
+            if (carro.getNVoltas() == MAX_NUM_VOLTAS)          // Sai da fila caso o carro já deu o máximo numero de voltas
+                break;
+        }
 
-        while( !carro.lock);
+        while( !carro.lock)                                     // Espera o carro ter esvaziado
+        {
+            if (carro.getNVoltas() == MAX_NUM_VOLTAS)           // Sai da fila caso o carro já deu o máximo numero de voltas
+                break;
+        }
+
+        if (carro.getNVoltas() == MAX_NUM_VOLTAS)               // Sai da fila caso o carro já deu o máximo numero de voltas
+            break;
 
         pthread_mutex_lock(&printf_mutex);
         std::cout << "Passageiro [" << i << "] com a ficha [" << carro.turn[i] << "] entrou no carro\n";
         pthread_mutex_unlock(&printf_mutex);
 
-        entraNoCarro();
+        entraNoCarro();             // Entra no carro
 
-        carro.next++;
+        carro.next++;               // O próximo passageiro pode entrar
 
-        while(carro.lock);
+        while(carro.lock);          // Espera o carro dar uma volta
 
-        while(TS(&lock));
+        while(TS(&lock));           // Limita que apenas um passageiro saia por vez
 
         pthread_mutex_lock(&printf_mutex);
         std::cout << "Passageiro [" << i << "] saiu no carro\n";
         pthread_mutex_unlock(&printf_mutex);
 
-        saiDoCarro();
+        saiDoCarro();               // Sai do carro
 
-        lock = false;
+        lock = false;               // Avisa que o próximo passageiro pode sair do carro
 
 
 
-        passeiaPeloParque();
+        passeiaPeloParque();        // Vai dar um passeio pelo parque
 
     }
-    while(carro.nPessoas != 0);
+
     pthread_mutex_lock(&printf_mutex);
     std::cout << "Passageiro [" << i << "] saindo do parque!\n";
     pthread_mutex_unlock(&printf_mutex);

@@ -4,7 +4,7 @@
 #include "car.h"
 #include <thread>
 
-#define NUM_THREADS 50
+#define NUM_THREADS 13
 
 int next = 1;
 
