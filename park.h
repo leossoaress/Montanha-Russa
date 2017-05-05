@@ -5,7 +5,7 @@ class Parque {
 
 public:
 
-    Parque(int nPassageiros);
+    Parque(int nPassageiros, int maxVoltas);
 
     virtual ~Parque();
 
@@ -13,10 +13,12 @@ public:
 
     void setNumPassageiros(int num);
 
+    int getMaxVoltas();
+
 private:
 
     int numPassageiros;
-
+    int mVoltas;
 };
 
 #endif //MR_PARK_H

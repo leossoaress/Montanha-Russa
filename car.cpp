@@ -1,6 +1,6 @@
 #include "car.h"
 
-#define MAX_NUM_VOLTAS 5
+#define MAX_NUM_VOLTAS 6
 
 static pthread_mutex_t printf_mutex;
 
@@ -87,7 +87,7 @@ int Carro::getNumPassageiros()
 
 void Carro::run()
 {
-    while ( voltas != MAX_NUM_VOLTAS + 1)
+    while ( voltas != parque.getMaxVoltas() + 1)
     {
         esperaEncher();     // Espera encher
 

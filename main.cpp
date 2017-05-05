@@ -8,11 +8,13 @@ using namespace std;
 
 int main() {
 
-    int a;
-    cout << "Entre com o valor de passageiros no parque: ";
+    int a,b;
+    cout << "Entre com o numero de passageiros no parque: ";
     cin >> a;
+    cout << "Entre com o numero de voltas do carro: ";
+    cin >> b;
 
-    Parque *parque = new Parque(a);
+    Parque *parque = new Parque(a,b);
 
     Carro *carro = new Carro( *parque );
 

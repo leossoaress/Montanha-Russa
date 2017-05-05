@@ -1,13 +1,9 @@
 #include "passanger.h"
 
-#define MAX_NUM_VOLTAS 5
-
 std::atomic_int number = {1};
 
 std::atomic_flag lock_stream = ATOMIC_FLAG_INIT;
-std::stringstream stream;
 
-bool lock = false;
 
 static pthread_mutex_t printf_mutex;
 
@@ -37,7 +33,7 @@ void Passageiro::passeiaPeloParque()
 
 bool Passageiro::parqueFechado()
 {
-    if (carro.getNVoltas() < MAX_NUM_VOLTAS)
+    if (carro.getNVoltas() < carro.getParque().getMaxVoltas())
         return false;
 
     return true;
@@ -49,30 +45,30 @@ void Passageiro::run(int i)
     while (!parqueFechado())
     {
 
-        if (carro.getNVoltas() == MAX_NUM_VOLTAS)          // Sai da fila caso o carro já deu o máximo numero de voltas
+        if (carro.getNVoltas() == carro.getParque().getMaxVoltas())          // Sai da fila caso o carro já deu o máximo numero de voltas
             break;
 
         carro.turn[i] = std::atomic_fetch_add( &number, 1 );   // O passageiro pega a ficha
 
         while (carro.turn[i] != carro.next)                    // Espera a ficha dele
         {
-            if (carro.getNVoltas() == MAX_NUM_VOLTAS)          // Sai da fila caso o carro já deu o máximo numero de voltas
+            if (carro.getNVoltas() == carro.getParque().getMaxVoltas())          // Sai da fila caso o carro já deu o máximo numero de voltas
                 break;
         }
 
         while(carro.nPessoas == carro.capacidade)              // Espera caso o carro  esteja cheio
         {
-            if (carro.getNVoltas() == MAX_NUM_VOLTAS)          // Sai da fila caso o carro já deu o máximo numero de voltas
+            if (carro.getNVoltas() == carro.getParque().getMaxVoltas())          // Sai da fila caso o carro já deu o máximo numero de voltas
                 break;
         }
 
         while( !carro.lock)                                     // Espera o carro ter esvaziado
         {
-            if (carro.getNVoltas() == MAX_NUM_VOLTAS)           // Sai da fila caso o carro já deu o máximo numero de voltas
+            if (carro.getNVoltas() == carro.getParque().getMaxVoltas())           // Sai da fila caso o carro já deu o máximo numero de voltas
                 break;
         }
 
-        if (carro.getNVoltas() == MAX_NUM_VOLTAS)               // Sai da fila caso o carro já deu o máximo numero de voltas
+        if (carro.getNVoltas() == carro.getParque().getMaxVoltas())               // Sai da fila caso o carro já deu o máximo numero de voltas
             break;
 
         pthread_mutex_lock(&printf_mutex);
