@@ -3,7 +3,9 @@
 #define MAX_NUM_VOLTAS 5
 
 std::atomic_int number = {1};
-std::atomic_int number1 = {5};
+
+std::atomic_flag lock_stream = ATOMIC_FLAG_INIT;
+std::stringstream stream;
 
 bool lock = false;
 
@@ -41,15 +43,6 @@ bool Passageiro::parqueFechado()
     return true;
 }
 
-bool TS(bool *lock)
-{
-    pthread_mutex_lock(&printf_mutex);
-    bool temp = *lock;
-    *lock = true;
-    pthread_mutex_unlock(&printf_mutex);
-    return temp;
-
-}
 
 void Passageiro::run(int i)
 {
@@ -86,23 +79,24 @@ void Passageiro::run(int i)
         std::cout << "Passageiro [" << i << "] com a ficha [" << carro.turn[i] << "] entrou no carro\n";
         pthread_mutex_unlock(&printf_mutex);
 
+        x++;
+
         entraNoCarro();             // Entra no carro
 
         carro.next++;               // O próximo passageiro pode entrar
 
         while(carro.lock);          // Espera o carro dar uma volta
 
-        while(TS(&lock));           // Limita que apenas um passageiro saia por vez
+
+        while(lock_stream.test_and_set());           // Limita que apenas um passageiro saia por vez
 
         pthread_mutex_lock(&printf_mutex);
-        std::cout << "Passageiro [" << i << "] saiu no carro\n";
+        std::cout << "Passageiro [" << i << "] saiu do carro\n";
         pthread_mutex_unlock(&printf_mutex);
 
         saiDoCarro();               // Sai do carro
 
-        lock = false;               // Avisa que o próximo passageiro pode sair do carro
-
-
+        lock_stream.clear();        //Avisa que o próximo passageiro pode sair do carro
 
         passeiaPeloParque();        // Vai dar um passeio pelo parque
 
@@ -110,7 +104,10 @@ void Passageiro::run(int i)
 
 
     pthread_mutex_lock(&printf_mutex);
-    carro.getParque().setNumPassageiros(1);
-    std::cout << "Passageiro [" << i << "] saindo do parque!\n";
+
+    std::cout << "Passageiro [" << i << "] saiu do parque e deu [ " << x << "] voltas!\n";
+
+    carro.getParque().setNumPassageiros(1);         // decrementa o número de passageiros no parque
+
     pthread_mutex_unlock(&printf_mutex);
 }

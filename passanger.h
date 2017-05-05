@@ -6,6 +6,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <pthread.h>
+#include <sstream>
 
 class Passageiro {
 
@@ -30,8 +31,7 @@ public:
 
     void run(int id);
 
-    bool test_and_set(bool &a);
-
+    int x = {0};
 
 };
 

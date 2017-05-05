@@ -10,22 +10,29 @@ Carro::Carro(Parque &p) : parque(p)
 {
 
     this->voltas = 0;
-    Carro::capacidade = 5;
+    Carro::capacidade = p.getNumPassageiros() / 2;
     this->nPassageiros = 0;
     nPessoas = 0;
     lock = true;
     next = 1;
-    turn = new int [10];
+    turn = new int [p.getNumPassageiros()];
 }
 
 Carro::~Carro() {}
 
 void Carro::esperaEncher()
 {
-    while(nPessoas != capacidade);
+    while(nPessoas != capacidade)
+    {
+        if(getParque().getNumPassageiros() == 0)
+            break;
+    }
+
+        if(getParque().getNumPassageiros() == 0)
+            return;
 
     pthread_mutex_lock(&printf_mutex);
-    std::cout << "Encheu\n";
+    std::cout << "\nEncheu\n";
     pthread_mutex_unlock(&printf_mutex);
 
 }
@@ -33,10 +40,9 @@ void Carro::esperaEncher()
 void Carro::daUmaVolta()
 {
     pthread_mutex_lock(&printf_mutex);
-    std::cout << "Saiu para volta [" << voltas+1 <<  "]\n";
+    std::cout << "Saiu para volta [" << voltas+1 <<  "]\n\n";
     pthread_mutex_unlock(&printf_mutex);
 
-    voltas++;
     sleep(5);
 }
 
@@ -44,7 +50,7 @@ void Carro::esperaEsvaziar()
 {
     while(nPessoas);
     pthread_mutex_lock(&printf_mutex);
-    std::cout << "Esvaziou\n";
+    std::cout << "\nEsvaziou\n\n";
     pthread_mutex_unlock(&printf_mutex);
 
 }
@@ -81,15 +87,22 @@ int Carro::getNumPassageiros()
 
 void Carro::run()
 {
-    while (parque.getNumPassageiros() > 0)
+    while ( voltas != MAX_NUM_VOLTAS + 1)
     {
         esperaEncher();     // Espera encher
+
+        if(getParque().getNumPassageiros() == 0)     //verifica se o parque está vazio
+            break;
+
         daUmaVolta();       // Dorme com sleep
         lock = false;       // Avisa que o carro encheu
 
         esperaEsvaziar();   // Espera esvaziar
         lock = true;        // Avisa que o carro esvaziou
 
+
+        voltas++;
     }
+
 
 }

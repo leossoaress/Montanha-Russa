@@ -4,15 +4,15 @@
 #include "car.h"
 #include <thread>
 
-#define NUM_THREADS 10
-
-int next = 1;
-
 using namespace std;
 
 int main() {
 
-    Parque *parque = new Parque( NUM_THREADS );
+    int a;
+    cout << "Entre com o valor de passageiros no parque: ";
+    cin >> a;
+
+    Parque *parque = new Parque(a);
 
     Carro *carro = new Carro( *parque );
 
@@ -20,22 +20,27 @@ int main() {
 
     std::thread tCarro = std::thread( &Carro::run, carro );
 
-    std::thread *tPassageiro = new std::thread[NUM_THREADS];
+    std::thread *tPassageiro = new std::thread[a];
 
-    for (int i = 0; i < NUM_THREADS; i++)
+    for (int i = 0; i <a; i++)
     {
         tPassageiro[i] = std::thread( &Passageiro::run, pass, i );
     }
 
 
-    for(int i = 0; i<NUM_THREADS; i++)
+    for(int i = 0; i<a; i++)
     {
         tPassageiro[i].join();
     }
 
+    tCarro.join();
+
+    std::cout << std::endl << "Todos os passageiros sairam do parque" << std::endl;
+    std::cout << "O parque fechou" << std::endl;
 
     delete carro;
-
+    delete parque;
 
     return 0;
+
 }
