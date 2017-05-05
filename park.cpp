@@ -14,5 +14,5 @@ int Parque::getNumPassageiros()
 
 void Parque::setNumPassageiros(int num)
 {
-    numPassageiros = num;
+    numPassageiros -= num;
 }

@@ -56,8 +56,7 @@ void Passageiro::run(int i)
     while (!parqueFechado())
     {
 
-
-        if (carro.getNVoltas() == MAX_NUM_VOLTAS || (carro.nPessoas == 5 && carro.getNVoltas() == MAX_NUM_VOLTAS-1))
+        if (carro.getNVoltas() == MAX_NUM_VOLTAS)          // Sai da fila caso o carro já deu o máximo numero de voltas
             break;
 
         carro.turn[i] = std::atomic_fetch_add( &number, 1 );   // O passageiro pega a ficha
@@ -109,7 +108,9 @@ void Passageiro::run(int i)
 
     }
 
+
     pthread_mutex_lock(&printf_mutex);
+    carro.getParque().setNumPassageiros(1);
     std::cout << "Passageiro [" << i << "] saindo do parque!\n";
     pthread_mutex_unlock(&printf_mutex);
 }

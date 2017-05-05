@@ -1,5 +1,7 @@
 #include "car.h"
 
+#define MAX_NUM_VOLTAS 5
+
 static pthread_mutex_t printf_mutex;
 
 int Carro::capacidade = 0;
@@ -89,4 +91,5 @@ void Carro::run()
         lock = true;        // Avisa que o carro esvaziou
 
     }
+
 }

@@ -4,7 +4,7 @@
 #include "car.h"
 #include <thread>
 
-#define NUM_THREADS 13
+#define NUM_THREADS 10
 
 int next = 1;
 
@@ -32,6 +32,7 @@ int main() {
     {
         tPassageiro[i].join();
     }
+
 
     delete carro;
 
